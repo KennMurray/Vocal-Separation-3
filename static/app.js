@@ -447,7 +447,7 @@ function createTrackUI(track) {
     const waveform = document.createElement("div");
     waveform.className = "track-waveform";
     waveform.setAttribute("role", "slider");
-    waveform.setAttribute("tabindex", "0);
+    waveform.setAttribute("tabindex", "0");
     waveform.setAttribute("aria-label", `${track.label} waveform; seek audio`);
 
     const canvas = document.createElement("canvas");
