@@ -1,0 +1,355 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#19191f">
+    <title>AI Vocal Separation Studio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-shell">
+
+        <header class="topbar">
+            <a class="brand" href="/" aria-label="AI Vocal Separation Studio home">
+                <span class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M3 10v4M7 5v14M11 8v8M15 3v18M19 7v10M23 10v4"
+                              stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <span class="brand-copy">
+                    <strong>VOCAL STUDIO</strong>
+                    <small>AI VOCAL SEPARATION</small>
+                </span>
+            </a>
+
+            <div class="header-actions">
+                <span class="local-badge">
+                    <span class="status-dot"></span>
+                    LOCAL STUDIO
+                </span>
+                <button class="icon-button" id="settingsToggle"
+                        type="button" aria-label="Open appearance settings"
+                        aria-expanded="false" title="Appearance settings">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"
+                              stroke="currentColor" stroke-width="1.7"/>
+                        <path d="m19.4 15 .1.1a1.8 1.8 0 0 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 0 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1a1.8 1.8 0 0 1-2.5-2.5l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 0 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1a1.8 1.8 0 0 1 2.5-2.5l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 0 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 0 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .9 3h.2a1.8 1.8 0 0 1 0 3.6h-.2a1.8 1.8 0 0 0-.9 3Z"
+                              stroke="currentColor" stroke-width="1.4"
+                              stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+
+            <section class="welcome-section">
+                <div class="eyebrow">
+                    <span class="eyebrow-line"></span>
+                    YOUR PERSONAL AUDIO WORKSPACE
+                </div>
+                <h1>Separate the sound.<br><span>Shape your music.</span></h1>
+                <p class="welcome-description">
+                    Turn your tracks into individual stems and build your own
+                    listening experience, one layer at a time.
+                </p>
+            </section>
+
+            <section class="upload-card" id="uploadSection">
+                <div class="section-heading">
+                    <div>
+                        <span class="section-kicker">01 / IMPORT</span>
+                        <h2>Bring your audio</h2>
+                    </div>
+                    <span class="file-limit">MAX. 200 MB</span>
+                </div>
+
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <label class="drop-zone" id="dropZone" for="audioFile">
+                        <input type="file" id="audioFile" name="audio"
+                               accept=".wav,.mp3,.flac,.ogg,.m4a,audio/*"
+                               hidden>
+                        <span class="upload-icon">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"
+                                      stroke="currentColor" stroke-width="1.8"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"
+                                      stroke="currentColor" stroke-width="1.8"
+                                      stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <strong id="fileName">Drop your audio here</strong>
+                        <span class="drop-description" id="fileDescription">
+                            or click to browse your files
+                        </span>
+                        <span class="supported-formats">WAV · MP3 · FLAC · OGG · M4A</span>
+                    </label>
+
+                    <button class="primary-button upload-submit"
+                            id="uploadButton" type="submit" disabled>
+                        <span>Separate audio</span>
+                        <span aria-hidden="true">↗</span>
+                    </button>
+                </form>
+
+                <p class="privacy-note">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <rect x="5" y="10" width="14" height="11" rx="2"
+                              stroke="currentColor" stroke-width="1.6"/>
+                        <path d="M8 10V7a4 4 0 0 1 8 0v3"
+                              stroke="currentColor" stroke-width="1.6"
+                              stroke-linecap="round"/>
+                    </svg>
+                    Audio is processed by your local studio server.
+                </p>
+            </section>
+
+            <section class="processing-card" id="statusPanel" hidden>
+                <div class="processing-top">
+                    <div>
+                        <span class="section-kicker">02 / PROCESSING</span>
+                        <h2 id="statusTitle">Preparing your track...</h2>
+                    </div>
+                    <span class="processing-percent" id="progressPercent">0%</span>
+                </div>
+                <p class="status-message" id="statusMessage"
+                   aria-live="polite">Waiting to start...</p>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+                <p class="processing-hint">
+                    Processing time depends on the length of your audio
+                    and your computer's performance.
+                </p>
+            </section>
+
+            <section class="studio-section" id="resultsSection" hidden>
+                <div class="studio-heading">
+                    <div>
+                        <span class="section-kicker">03 / YOUR WORKSPACE</span>
+                        <h2>Track studio</h2>
+                        <p class="studio-subtitle" id="trackSummary">
+                            Your separated audio will appear here.
+                        </p>
+                    </div>
+                    <button class="secondary-button" id="downloadZipButton"
+                            type="button" hidden>
+                        Download all ↓
+                    </button>
+                </div>
+
+                <div class="player-card">
+                    <div class="player-track-info">
+                        <span class="cover-art">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M4 15V9m4 10V5m4 13V6m4 12V8m4 9v-5"
+                                      stroke="currentColor" stroke-width="2"
+                                      stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <div class="player-title">
+                            <strong id="trackTitle">Your track</strong>
+                            <span id="playerSubtitle">Separated audio stems</span>
+                        </div>
+                    </div>
+
+                    <div class="master-controls">
+                        <button class="player-button" id="playPauseButton"
+                                type="button" aria-label="Play or pause all tracks"
+                                title="Play / pause">
+                            <svg id="playIcon" viewBox="0 0 24 24"
+                                 fill="currentColor" aria-hidden="true">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                            <svg id="pauseIcon" viewBox="0 0 24 24"
+                                 fill="currentColor" aria-hidden="true" hidden>
+                                <path d="M6 5h4v14H6zM14 5h4v14h-4z"/>
+                            </svg>
+                        </button>
+                        <span class="time-readout" id="currentTime">0:00</span>
+                        <div class="master-timeline" id="masterTimeline"
+                             role="slider" tabindex="0"
+                             aria-label="Seek through track"
+                             aria-valuemin="0" aria-valuemax="100"
+                             aria-valuenow="0">
+                            <div class="master-timeline-fill"
+                                 id="masterTimelineFill"></div>
+                            <div class="master-playhead"
+                                 id="masterPlayhead"></div>
+                        </div>
+                        <span class="time-readout" id="duration">0:00</span>
+                    </div>
+
+                    <div class="player-footer">
+                        <span><span class="status-dot"></span> SYNC PLAYBACK</span>
+                        <span id="playbackStatus">READY TO PLAY</span>
+                    </div>
+                </div>
+
+                <div class="timeline-heading">
+                    <div>
+                        <h3>Audio layers</h3>
+                        <p>All tracks share one playback position.</p>
+                    </div>
+                    <span class="timeline-label">WAVEFORM VIEW</span>
+                </div>
+
+                <div class="tracks-container" id="tracksContainer">
+                    <div class="empty-tracks">
+                        <span class="empty-tracks-icon">〰</span>
+                        <p>Your waveforms will appear here after separation.</p>
+                    </div>
+                </div>
+
+                <p class="waveform-note">
+                    Waveform colors and playback effects can be customized
+                    in Appearance settings.
+                </p>
+            </section>
+
+            <section class="settings-panel" id="settingsPanel" hidden>
+                <div class="settings-heading">
+                    <div>
+                        <span class="section-kicker">PERSONALIZATION</span>
+                        <h2>Make it yours.</h2>
+                        <p>Customize the studio without changing your audio.</p>
+                    </div>
+                    <button class="icon-button" id="settingsClose"
+                            type="button" aria-label="Close appearance settings">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
+                <div class="settings-grid">
+                    <label class="setting-item">
+                        <span>Page background</span>
+                        <span class="setting-description">Main studio background</span>
+                        <span class="color-input-row">
+                            <input type="color" id="backgroundColor"
+                                   value="#19191f">
+                            <input type="text" id="backgroundColorText"
+                                   value="#19191f" maxlength="7"
+                                   spellcheck="false">
+                        </span>
+                    </label>
+
+                    <label class="setting-item">
+                        <span>Accent color</span>
+                        <span class="setting-description">Buttons and highlights</span>
+                        <span class="color-input-row">
+                            <input type="color" id="accentColor" value="#ff80c8">
+                            <input type="text" id="accentColorText"
+                                   value="#ff80c8" maxlength="7"
+                                   spellcheck="false">
+                        </span>
+                    </label>
+
+                    <label class="setting-item">
+                        <span>Played waveform</span>
+                        <span class="setting-description">Audio already played</span>
+                        <span class="color-input-row">
+                            <input type="color" id="playedColor" value="#b45cff">
+                            <input type="text" id="playedColorText"
+                                   value="#b45cff" maxlength="7"
+                                   spellcheck="false">
+                        </span>
+                    </label>
+
+                    <label class="setting-item">
+                        <span>Unplayed waveform</span>
+                        <span class="setting-description">Audio still ahead</span>
+                        <span class="color-input-row">
+                            <input type="color" id="unplayedColor" value="#454550">
+                            <input type="text" id="unplayedColorText"
+                                   value="#454550" maxlength="7"
+                                   spellcheck="false">
+                        </span>
+                    </label>
+
+                    <label class="setting-item">
+                        <span>Wave gradient — start</span>
+                        <span class="setting-description">Decorative wave's first color</span>
+                        <span class="color-input-row">
+                            <input type="color" id="gradientStart" value="#19191f">
+                            <input type="text" id="gradientStartText"
+                                   value="#19191f" maxlength="7"
+                                   spellcheck="false">
+                        </span>
+                    </label>
+
+                    <label class="setting-item">
+                        <span>Wave gradient — end</span>
+                        <span class="setting-description">Decorative wave's second color</span>
+                        <span class="color-input-row">
+                            <input type="color" id="gradientEnd" value="#ff4545">
+                            <input type="text" id="gradientEndText"
+                                   value="#ff4545" maxlength="7"
+                                   spellcheck="false">
+                        </span>
+                    </label>
+                </div>
+
+                <div class="setting-item track-color-setting">
+                    <span>Track colors</span>
+                    <span class="setting-description">
+                        Set a separate color for each audio layer.
+                    </span>
+                    <div class="track-color-grid">
+                        <label>
+                            <span>Lead vocal</span>
+                            <input type="color" id="leadColor" value="#ff80c8">
+                        </label>
+                        <label>
+                            <span>Back vocals</span>
+                            <input type="color" id="backColor" value="#b45cff">
+                        </label>
+                        <label>
+                            <span>Ad-libs</span>
+                            <input type="color" id="adlibsColor" value="#ff6868">
+                        </label>
+                        <label>
+                            <span>Instrumental</span>
+                            <input type="color" id="instrumentalColor" value="#67d8c5">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-item wave-effect-setting">
+                    <span>Decorative wave effect</span>
+                    <span class="setting-description">
+                        An extra visual layer, independent of the audio waveform.
+                    </span>
+                    <label class="toggle-row">
+                        <span>Enable decorative wave</span>
+                        <input type="checkbox" id="waveEffectEnabled" checked>
+                    </label>
+                </div>
+
+                <div class="settings-actions">
+                    <button class="secondary-button" id="resetSettings"
+                            type="button">Reset defaults</button>
+                    <button class="primary-button" id="saveSettings"
+                            type="button">Apply appearance</button>
+                </div>
+                <p class="settings-feedback" id="settingsFeedback"
+                   aria-live="polite"></p>
+            </section>
+
+            <section class="info-footer">
+                <div class="footer-mark">VS.</div>
+                <p>Made for people who hear every layer.</p>
+                <span>AI VOCAL SEPARATION STUDIO</span>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
